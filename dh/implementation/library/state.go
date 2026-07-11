@@ -1,6 +1,6 @@
 package library
 
-//@ import by "dh-gobra/verification/bytes"
+//@ import byt "dh-gobra/verification/bytes"
 
 
 type LibState struct {
@@ -18,7 +18,7 @@ pred Mem(data []byte)
 ghost
 decreases
 requires acc(Mem(b), 1/32)
-pure func Abs(b []byte) (res by.Bytes)
+pure func Abs(b []byte) (res byt.Bytes)
 @*/
 
 //@ trusted
