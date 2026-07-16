@@ -475,7 +475,7 @@ func PayloadMsgViewShift(t pl.Place, rid tm.Term, msg []byte) (inputDataT tm.Ter
 //@ ensures  pl.token(old(io.get_e_InFact_placeDst(t, rid)))
 //@ ensures  Mem(msg) && byt.gamma(inputDataT) == Abs(msg)
 //@ ensures  inputDataT == old(io.get_e_InFact_r1(t, rid))
-func GetInFact(msg []byte /*@, ghost t pl.Place, ghost rid tm.Term @*/) /*@ (inputDataT tm.Term) @*/ {
+func GetInFact(msg []byte /*@, ghost t pl.Place, ghost rid tm.Term @*/) /*@ (ghost inputDataT tm.Term) @*/ {
 	return
 }
 	

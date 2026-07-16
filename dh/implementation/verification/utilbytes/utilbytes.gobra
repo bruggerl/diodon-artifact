@@ -3,9 +3,9 @@ package utilbytes
  import byt "dh-gobra/verification/bytes"
 import tm "dh-gobra/verification/utilterm"
 
-type Bytes = byt.Bytes
+ghost type Bytes = byt.Bytes
 
-type BytesUtil domain {
+ghost type BytesUtil domain {
     // constructors
     func tuple2B(byt.Bytes, byt.Bytes) byt.Bytes
     axiom { 
