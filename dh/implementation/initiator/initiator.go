@@ -139,11 +139,11 @@ func RunInitiator(l *LibState, rid uint32 /*@, ghost t pl.Place @*/) (err error)
 //@ requires acc(i.Mem(skAT, skBT), 1/2) && acc(Mem(X), 1/8)
 //@ requires Abs(X) == byt.gamma(tm.exp(tm.generator(), xT))
 //@ requires pl.token(t) && io.P_Alice(t, ridT, s)
-//@ requires ft.Setup_Alice(ridT, tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), skAT, skBT) in s
-//@ requires ft.FrFact_Alice(ridT, xT) in s
+//@ requires ft.Setup_Alice(ridT, tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), skAT, skBT) elem s
+//@ requires ft.FrFact_Alice(ridT, xT) elem s
 //@ ensures  acc(i.Mem(skAT, skBT), 1/2) && acc(Mem(X), 1/8)
 //@ ensures  err == nil ==> pl.token(t1) && io.P_Alice(t1, ridT, s1)
-//@ ensures  err == nil ==> ft.St_Alice_1(ridT, tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), skAT, skBT, xT) in s1
+//@ ensures  err == nil ==> ft.St_Alice_1(ridT, tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), skAT, skBT, xT) elem s1
 func (i *Initiator) sendMsg1(X []byte /*@, ghost skAT tm.Term, ghost skBT tm.Term, ghost xT tm.Term, ghost t pl.Place, ghost ridT tm.Term, ghost s mset[ft.Fact] @*/) (err error /*@, ghost t1 pl.Place, ghost s1 mset[ft.Fact] @*/) {
 	//@ unfold io.P_Alice(t, ridT, s)
 	//@ unfold io.phiR_Alice_0(t, ridT, s)
@@ -184,12 +184,12 @@ func (i *Initiator) sendMsg1(X []byte /*@, ghost skAT tm.Term, ghost skBT tm.Ter
 //@ requires acc(i.Mem(skAT, skBT), 1/2) && acc(Mem(X), 1/8)
 //@ requires Abs(X) == byt.gamma(tm.exp(tm.generator(), xT))
 //@ requires pl.token(t) && io.P_Alice(t, ridT, s)
-//@ requires ft.St_Alice_1(ridT, tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), skAT, skBT, xT) in s
+//@ requires ft.St_Alice_1(ridT, tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), skAT, skBT, xT) elem s
 //@ ensures  acc(i.Mem(skAT, skBT), 1/2) && acc(Mem(X), 1/8)
 //@ ensures  err == nil ==> Mem(receivedY) && Abs(receivedY) == byt.gamma(YT)
 //@ ensures  err == nil ==> pl.token(t1) && io.P_Alice(t1, ridT, s1)
-//@ ensures  err == nil ==> ft.St_Alice_2(ridT, tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), skAT, skBT, xT, YT) in s1
-//@ ensures  err == nil ==> ft.OutFact_Alice(ridT, tm.sign(tm.tuple5(tm.integer32(Msg3Tag), tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), YT, tm.exp(tm.generator(), xT)), skAT)) in s1
+//@ ensures  err == nil ==> ft.St_Alice_2(ridT, tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), skAT, skBT, xT, YT) elem s1
+//@ ensures  err == nil ==> ft.OutFact_Alice(ridT, tm.sign(tm.tuple5(tm.integer32(Msg3Tag), tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), YT, tm.exp(tm.generator(), xT)), skAT)) elem s1
 func (i *Initiator) recvMsg2(X []byte, /*@ ghost skAT tm.Term, ghost skBT tm.Term, ghost xT tm.Term, ghost t pl.Place, ghost ridT tm.Term, ghost s mset[ft.Fact] @*/) (receivedY []byte, err error /*@, ghost YT tm.Term, ghost t1 pl.Place, ghost s1 mset[ft.Fact] @*/) {
 	//@ unfold acc(i.Mem(skAT, skBT), 1/2)
 	//@ unfold io.P_Alice(t, ridT, s)
@@ -265,7 +265,7 @@ func (i *Initiator) recvMsg2(X []byte, /*@ ghost skAT tm.Term, ghost skBT tm.Ter
 //@ requires acc(Mem(X), 1/8) && acc(Mem(receivedY), 1/8)
 //@ requires Abs(X) == byt.gamma(tm.exp(tm.generator(), xT)) && Abs(receivedY) == byt.gamma(YT)
 //@ requires pl.token(t) && io.P_Alice(t, ridT, s)
-//@ requires ft.OutFact_Alice(ridT, tm.sign(tm.tuple5(tm.integer32(Msg3Tag), tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), YT, tm.exp(tm.generator(), xT)), skAT)) in s
+//@ requires ft.OutFact_Alice(ridT, tm.sign(tm.tuple5(tm.integer32(Msg3Tag), tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), YT, tm.exp(tm.generator(), xT)), skAT)) elem s
 //@ ensures  acc(i.Mem(skAT, skBT), 1/2)
 //@ ensures  acc(Mem(X), 1/8) && acc(Mem(receivedY), 1/8)
 //@ ensures  err == nil ==> pl.token(t1) && io.P_Alice(t1, ridT, s1)

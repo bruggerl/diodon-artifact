@@ -60,7 +60,7 @@ func (l *LibState) UnmarshalMsg2(data []byte) (res *Msg2, err error) {
 	}
 
 	tag := binary.BigEndian.Uint32(data[:4])
-	// note that idB occurs before idA in the 2nd message:
+	// note that idB occurs before idA elem the 2nd message:
 	idB := binary.BigEndian.Uint32(data[4:8])
 	idA := binary.BigEndian.Uint32(data[8:12])
 	X := data[12:(DHHalfKeyLength + 12)]
