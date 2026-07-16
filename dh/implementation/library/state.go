@@ -1,7 +1,7 @@
 package library
 
 import net "net"
-//@ import by "dh-gobra/verification/bytes"
+//@ import byt "dh-gobra/verification/bytes"
 
 type LibState struct {
 	conn net.Conn
@@ -20,7 +20,7 @@ pred Mem(data []byte)
 ghost
 decreases
 requires acc(Mem(b), _)
-pure func Abs(b []byte) (res by.Bytes)
+pure func Abs(b []byte) (res byt.Bytes)
 @*/
 
 //@ trusted

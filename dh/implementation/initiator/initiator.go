@@ -1,7 +1,7 @@
 package initiator
 
 import . "dh-gobra/library"
-//@ import by "dh-gobra/verification/bytes"
+//@ import byt "dh-gobra/verification/bytes"
 //@ import cl "dh-gobra/verification/claim"
 //@ import ft "dh-gobra/verification/fact"
 //@ import pl "dh-gobra/verification/place"
@@ -24,7 +24,7 @@ type Initiator struct {
 /*@
 pred (i *Initiator) Mem(skAT, skBT tm.Term) {
 	acc(i) && acc(Mem(i.skA), 1/4) && acc(Mem(i.pkB), 1/4) && i.l.Mem() &&
-	Abs(i.skA) == by.gamma(skAT) && Abs(i.pkB) == by.gamma(tm.pk(skBT))
+	Abs(i.skA) == byt.gamma(skAT) && Abs(i.pkB) == byt.gamma(tm.pk(skBT))
 }
 
 ghost
@@ -137,7 +137,7 @@ func RunInitiator(l *LibState, rid uint32 /*@, ghost t pl.Place @*/) (err error)
 }
 
 //@ requires acc(i.Mem(skAT, skBT), 1/2) && acc(Mem(X), 1/8)
-//@ requires Abs(X) == by.gamma(tm.exp(tm.generator(), xT))
+//@ requires Abs(X) == byt.gamma(tm.exp(tm.generator(), xT))
 //@ requires pl.token(t) && io.P_Alice(t, ridT, s)
 //@ requires ft.Setup_Alice(ridT, tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), skAT, skBT) in s
 //@ requires ft.FrFact_Alice(ridT, xT) in s
@@ -182,11 +182,11 @@ func (i *Initiator) sendMsg1(X []byte /*@, ghost skAT tm.Term, ghost skBT tm.Ter
 }
 
 //@ requires acc(i.Mem(skAT, skBT), 1/2) && acc(Mem(X), 1/8)
-//@ requires Abs(X) == by.gamma(tm.exp(tm.generator(), xT))
+//@ requires Abs(X) == byt.gamma(tm.exp(tm.generator(), xT))
 //@ requires pl.token(t) && io.P_Alice(t, ridT, s)
 //@ requires ft.St_Alice_1(ridT, tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), skAT, skBT, xT) in s
 //@ ensures  acc(i.Mem(skAT, skBT), 1/2) && acc(Mem(X), 1/8)
-//@ ensures  err == nil ==> Mem(receivedY) && Abs(receivedY) == by.gamma(YT)
+//@ ensures  err == nil ==> Mem(receivedY) && Abs(receivedY) == byt.gamma(YT)
 //@ ensures  err == nil ==> pl.token(t1) && io.P_Alice(t1, ridT, s1)
 //@ ensures  err == nil ==> ft.St_Alice_2(ridT, tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), skAT, skBT, xT, YT) in s1
 //@ ensures  err == nil ==> ft.OutFact_Alice(ridT, tm.sign(tm.tuple5(tm.integer32(Msg3Tag), tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), YT, tm.exp(tm.generator(), xT)), skAT)) in s1
@@ -234,11 +234,11 @@ func (i *Initiator) recvMsg2(X []byte, /*@ ghost skAT tm.Term, ghost skBT tm.Ter
 	//@ idAT := tm.integer32(i.getIdA(skAT, skBT))
 	//@ idBT := tm.integer32(i.getIdB(skAT, skBT))
 	//@ XT := tm.exp(tm.generator(), xT)
-	//@ YT := p.patternRequirement2(ridT, idAT, idBT, skAT, skBT, xT, by.oneTerm(Abs(receivedY)), msg2T, t1, s1)
+	//@ YT := p.patternRequirement2(ridT, idAT, idBT, skAT, skBT, xT, byt.oneTerm(Abs(receivedY)), msg2T, t1, s1)
 	// the following 2 assert stmts are needed for triggering reasons:
 	//@ assert ay.getMsgB(Abs(signedMsg2)) == Abs(msg2Data)
-	//@ assert by.ex55B(Abs(msg2Data)) == Abs(receivedY)
-	//@ assert Abs(receivedY) == by.gamma(YT)
+	//@ assert byt.ex55B(Abs(msg2Data)) == Abs(receivedY)
+	//@ assert Abs(receivedY) == byt.gamma(YT)
 
 	//@ unfold io.P_Alice(t1, ridT, s1)
 	//@ unfold io.phiR_Alice_1(t1, ridT, s1)
@@ -263,7 +263,7 @@ func (i *Initiator) recvMsg2(X []byte, /*@ ghost skAT tm.Term, ghost skBT tm.Ter
 
 //@ requires acc(i.Mem(skAT, skBT), 1/2)
 //@ requires acc(Mem(X), 1/8) && acc(Mem(receivedY), 1/8)
-//@ requires Abs(X) == by.gamma(tm.exp(tm.generator(), xT)) && Abs(receivedY) == by.gamma(YT)
+//@ requires Abs(X) == byt.gamma(tm.exp(tm.generator(), xT)) && Abs(receivedY) == byt.gamma(YT)
 //@ requires pl.token(t) && io.P_Alice(t, ridT, s)
 //@ requires ft.OutFact_Alice(ridT, tm.sign(tm.tuple5(tm.integer32(Msg3Tag), tm.integer32(i.getIdA(skAT, skBT)), tm.integer32(i.getIdB(skAT, skBT)), YT, tm.exp(tm.generator(), xT)), skAT)) in s
 //@ ensures  acc(i.Mem(skAT, skBT), 1/2)
