@@ -1,7 +1,6 @@
 package library
 
-//@ import by "dh-gobra/verification/bytes"
-
+//@  import byt "dh-gobra/verification/bytes"
 
 type LibState struct {
 	idA uint32
@@ -18,19 +17,19 @@ pred Mem(data []byte)
 ghost
 decreases
 requires acc(Mem(b), _)
-pure func Abs(b []byte) (res by.Bytes)
+pure func Abs(b []byte) (res byt.Bytes)
 @*/
 
-//@ trusted
-//@ ensures Mem(res)
+// @ trusted
+// @ ensures Mem(res)
 func NewBytes(length int) (res []byte) {
 	return make([]byte, length)
 }
 
-//@ trusted
-//@ ensures err == nil ==> l.Mem()
+// @ trusted
+// @ ensures err == nil ==> l.Mem()
 func NewLibState(idA, idB uint32, privateKey [64]byte, peerPublicKey [32]byte) (l *LibState, err error) {
-	state := &LibState {
+	state := &LibState{
 		idA: idA,
 		idB: idB,
 		skA: privateKey,
