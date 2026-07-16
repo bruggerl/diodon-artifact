@@ -53,20 +53,20 @@ pred (i *Initiator) Inv() {
 		pl.token(i.token) && io.P_Alice(i.token, i.rid, i.absState)) &&
 	(i.initiatorState == Initialized ==>
 		InitializedPred(i.rid, i.idA, i.idB, i.skAT, i.skBT, i.absState)) &&
-		// ft.Setup_Alice(i.rid, tm.integer32(i.idA), tm.integer32(i.idB), i.skAT, i.skBT) in i.absState) &&
+		// ft.Setup_Alice(i.rid, tm.integer32(i.idA), tm.integer32(i.idB), i.skAT, i.skBT) elem i.absState) &&
 	(i.initiatorState >= ProducedHsMsg1 ==>
 		Mem(i.x) && Abs(i.x) == byt.gamma(i.xT) &&
 		Mem(i.X) && Abs(i.X) == byt.gamma(tm.exp(tm.generator(), i.xT))) &&
 	(i.initiatorState == ProducedHsMsg1 ==>
 		ProducedHsMsg1Pred(i.rid, i.idA, i.idB, i.skAT, i.skBT, i.xT, i.absState)) &&
-		// ft.St_Alice_1(i.rid, tm.integer32(i.idA), tm.integer32(i.idB), i.skAT, i.skBT, i.xT) in i.absState) &&
+		// ft.St_Alice_1(i.rid, tm.integer32(i.idA), tm.integer32(i.idB), i.skAT, i.skBT, i.xT) elem i.absState) &&
 	(i.initiatorState >= ProcessedHsMsg2 ==>
 		Mem(i.Y) && Abs(i.Y) == byt.gamma(i.YT) &&
 		ProcessedHsMsg2Pred(i.rid, i.idA, i.idB, i.skAT, i.skBT, i.xT, i.YT, i.absState)) &&
-		// ft.St_Alice_2(i.rid, tm.integer32(i.idA), tm.integer32(i.idB), i.skAT, i.skBT, i.xT, i.YT) in i.absState) &&
+		// ft.St_Alice_2(i.rid, tm.integer32(i.idA), tm.integer32(i.idB), i.skAT, i.skBT, i.xT, i.YT) elem i.absState) &&
 	(i.initiatorState == ProcessedHsMsg2 ==>
 		HasHsMsg3OutFact(i.rid, i.idA, i.idB, i.YT, i.xT, i.skAT, i.absState)) &&
-		// ft.OutFact_Alice(i.rid, tm.sign(tm.tuple5(tm.integer32(Msg3Tag), tm.integer32(i.idA), tm.integer32(i.idB), i.YT, tm.exp(tm.generator(), i.xT)), i.skAT)) in i.absState) &&
+		// ft.OutFact_Alice(i.rid, tm.sign(tm.tuple5(tm.integer32(Msg3Tag), tm.integer32(i.idA), tm.integer32(i.idB), i.YT, tm.exp(tm.generator(), i.xT)), i.skAT)) elem i.absState) &&
 	(i.initiatorState >= HandshakeCompleted ==>
 		HandshakeCompletedPred(i.irKey, i.riKey, i.xT, i.YT))
 		// Mem(i.sharedSecret) && Abs(i.sharedSecret) == byt.gamma(tm.exp(i.YT, i.xT)) &&
@@ -75,19 +75,19 @@ pred (i *Initiator) Inv() {
 }
 
 pred InitializedPred(rid tm.Term, idA, idB uint32, skAT, skBT tm.Term, s mset[ft.Fact]) {
-	ft.Setup_Alice(rid, tm.integer32(idA), tm.integer32(idB), skAT, skBT) in s
+	ft.Setup_Alice(rid, tm.integer32(idA), tm.integer32(idB), skAT, skBT) elem s
 }
 
 pred ProducedHsMsg1Pred(rid tm.Term, idA, idB uint32, skAT, skBT, xT tm.Term, s mset[ft.Fact]) {
-	ft.St_Alice_1(rid, tm.integer32(idA), tm.integer32(idB), skAT, skBT, xT) in s
+	ft.St_Alice_1(rid, tm.integer32(idA), tm.integer32(idB), skAT, skBT, xT) elem s
 }
 
 pred ProcessedHsMsg2Pred(rid tm.Term, idA, idB uint32, skAT, skBT, xT, YT tm.Term, s mset[ft.Fact]) {
-	ft.St_Alice_2(rid, tm.integer32(idA), tm.integer32(idB), skAT, skBT, xT, YT) in s
+	ft.St_Alice_2(rid, tm.integer32(idA), tm.integer32(idB), skAT, skBT, xT, YT) elem s
 }
 
 pred HasHsMsg3OutFact(rid tm.Term, idA, idB uint32, YT, xT, skAT tm.Term, s mset[ft.Fact]) {
-	ft.OutFact_Alice(rid, tm.sign(tm.tuple5(tm.integer32(Msg3Tag), tm.integer32(idA), tm.integer32(idB), YT, tm.exp(tm.generator(), xT)), skAT)) in s
+	ft.OutFact_Alice(rid, tm.sign(tm.tuple5(tm.integer32(Msg3Tag), tm.integer32(idA), tm.integer32(idB), YT, tm.exp(tm.generator(), xT)), skAT)) elem s
 }
 
 pred HandshakeCompletedPred(irKey, riKey []byte, xT, YT tm.Term) {
@@ -393,13 +393,13 @@ func (i *Initiator) ProduceHsMsg3() (signedMsg3 []byte, err error) {
 	// requires acc(Mem(signedMsg3), 1/2) && Abs(signedMsg3) == byt.gamma(msgT)
 	//@ requires pl.token(t0) && io.P_Alice(t0, ridT, s0)
 	//@ requires HasHsMsg3OutFact(ridT, i.idA, i.idB, i.YT, i.xT, i.skAT, s0)
-	// requires ft.OutFact_Alice(ridT, msgT) in s0
-	// requires ft.St_Alice_2(ridT, tm.integer32(i.idA), tm.integer32(i.idB), i.skAT, i.skBT, i.xT, i.YT) in s0
+	// requires ft.OutFact_Alice(ridT, msgT) elem s0
+	// requires ft.St_Alice_2(ridT, tm.integer32(i.idA), tm.integer32(i.idB), i.skAT, i.skBT, i.xT, i.YT) elem s0
 	//@ requires ProcessedHsMsg2Pred(ridT, i.idA, i.idB, i.skAT, i.skBT, i.xT, i.YT, s0)
 	//@ ensures  acc(i, 1/2) && acc(i.l.Mem(), 1/2)
 	//@ ensures  acc(Mem(signedMsg3), 1/2)
 	//@ ensures  pl.token(t1) && io.P_Alice(t1, ridT, s1)
-	// ensures  ft.St_Alice_2(ridT, tm.integer32(i.idA), tm.integer32(i.idB), i.skAT, i.skBT, i.xT, i.YT) in s1
+	// ensures  ft.St_Alice_2(ridT, tm.integer32(i.idA), tm.integer32(i.idB), i.skAT, i.skBT, i.xT, i.YT) elem s1
 	//@ ensures  ProcessedHsMsg2Pred(ridT, i.idA, i.idB, i.skAT, i.skBT, i.xT, i.YT, s1)
 	//@ outline(
 		//@ unfold io.P_Alice(t0, ridT, s0)
