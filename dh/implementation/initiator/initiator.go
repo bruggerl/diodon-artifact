@@ -3,7 +3,7 @@ package initiator
 import . "dh-gobra/library"
 
 //@ import arb "dh-gobra/verification/arb"
-//@ import by "dh-gobra/verification/bytes"
+//@ import byt "dh-gobra/verification/bytes"
 //@ import cl "dh-gobra/verification/claim"
 //@ import ft "dh-gobra/verification/fact"
 //@ import pl "dh-gobra/verification/place"
@@ -51,17 +51,17 @@ pred (i *Initiator) Inv() {
 	acc(i) &&
 	(i.initiatorState != Erroneous ==>
 		i.l.Mem() && acc(Mem(i.skA), 1/4) && acc(Mem(i.pkB), 1/4) &&
-		Abs(i.skA) == by.gamma(i.skAT) && Abs(i.pkB) == by.gamma(tm.pk(i.skBT)) &&
+		Abs(i.skA) == byt.gamma(i.skAT) && Abs(i.pkB) == byt.gamma(tm.pk(i.skBT)) &&
 		pl.token(i.token) && io.P_Alice(i.token, i.rid, i.absState)) &&
 	(i.initiatorState == Initialized ==>
 		InitializedPred(i.rid, i.idA, i.idB, i.skAT, i.skBT, i.absState)) &&
 	(i.initiatorState >= ProducedHsMsg1 ==>
-		Mem(i.x) && Abs(i.x) == by.gamma(i.xT) &&
-		Mem(i.X) && Abs(i.X) == by.gamma(tm.exp(tm.generator(), i.xT))) &&
+		Mem(i.x) && Abs(i.x) == byt.gamma(i.xT) &&
+		Mem(i.X) && Abs(i.X) == byt.gamma(tm.exp(tm.generator(), i.xT))) &&
 	(i.initiatorState == ProducedHsMsg1 ==>
 		ProducedHsMsg1Pred(i.rid, i.idA, i.idB, i.skAT, i.skBT, i.xT, i.absState)) &&
 	(i.initiatorState >= ProcessedHsMsg2 ==>
-		Mem(i.Y) && Abs(i.Y) == by.gamma(i.YT) &&
+		Mem(i.Y) && Abs(i.Y) == byt.gamma(i.YT) &&
 		ProcessedHsMsg2Pred(i.rid, i.idA, i.idB, i.skAT, i.skBT, i.xT, i.YT, i.absState)) &&
 	(i.initiatorState == ProcessedHsMsg2 ==>
 		HasHsMsg3OutFact(i.rid, i.idA, i.idB, i.YT, i.xT, i.skAT, i.absState)) &&
@@ -70,24 +70,24 @@ pred (i *Initiator) Inv() {
 }
 
 pred InitializedPred(rid tm.Term, idA, idB uint32, skAT, skBT tm.Term, s mset[ft.Fact]) {
-	ft.Setup_Alice(rid, tm.integer32(idA), tm.integer32(idB), skAT, skBT) in s
+	ft.Setup_Alice(rid, tm.integer32(idA), tm.integer32(idB), skAT, skBT) elem s
 }
 
 pred ProducedHsMsg1Pred(rid tm.Term, idA, idB uint32, skAT, skBT, xT tm.Term, s mset[ft.Fact]) {
-	ft.St_Alice_1(rid, tm.integer32(idA), tm.integer32(idB), skAT, skBT, xT) in s
+	ft.St_Alice_1(rid, tm.integer32(idA), tm.integer32(idB), skAT, skBT, xT) elem s
 }
 
 pred ProcessedHsMsg2Pred(rid tm.Term, idA, idB uint32, skAT, skBT, xT, YT tm.Term, s mset[ft.Fact]) {
-	ft.St_Alice_2(rid, tm.integer32(idA), tm.integer32(idB), skAT, skBT, xT, YT) in s
+	ft.St_Alice_2(rid, tm.integer32(idA), tm.integer32(idB), skAT, skBT, xT, YT) elem s
 }
 
 pred HasHsMsg3OutFact(rid tm.Term, idA, idB uint32, YT, xT, skAT tm.Term, s mset[ft.Fact]) {
-	ft.OutFact_Alice(rid, tm.sign(tm.tuple5(tm.integer32(Msg3Tag), tm.integer32(idA), tm.integer32(idB), YT, tm.exp(tm.generator(), xT)), skAT)) in s
+	ft.OutFact_Alice(rid, tm.sign(tm.tuple5(tm.integer32(Msg3Tag), tm.integer32(idA), tm.integer32(idB), YT, tm.exp(tm.generator(), xT)), skAT)) elem s
 }
 
 pred HandshakeCompletedPred(irKey, riKey []byte, xT, YT tm.Term) {
-	Mem(irKey) && Abs(irKey) == by.gamma(tm.kdf1(tm.exp(YT, xT))) &&
-	Mem(riKey) && Abs(riKey) == by.gamma(tm.kdf2(tm.exp(YT, xT)))
+	Mem(irKey) && Abs(irKey) == byt.gamma(tm.kdf1(tm.exp(YT, xT))) &&
+	Mem(riKey) && Abs(riKey) == byt.gamma(tm.kdf2(tm.exp(YT, xT)))
 }
 
 ghost
@@ -303,11 +303,11 @@ func (i *Initiator) ProcessHsMsg2(msg []byte) (success bool) {
 	//@ idAT := tm.integer32(i.idA)
 	//@ idBT := tm.integer32(i.idB)
 	//@ XT := tm.exp(tm.generator(), i.xT)
-	//@ YT := p.patternRequirement2(ridT, idAT, idBT, i.skAT, i.skBT, i.xT, by.oneTerm(Abs(i.Y)), msgT, t1, s1)
+	//@ YT := p.patternRequirement2(ridT, idAT, idBT, i.skAT, i.skBT, i.xT, byt.oneTerm(Abs(i.Y)), msgT, t1, s1)
 	// the following 2 assert stmts are needed for triggering reasons:
 	//@ assert ay.getMsgB(Abs(msg)) == Abs(msg2Data)
-	//@ assert by.ex55B(Abs(msg2Data)) == Abs(i.Y)
-	//@ assert Abs(i.Y) == by.gamma(YT)
+	//@ assert byt.ex55B(Abs(msg2Data)) == Abs(i.Y)
+	//@ assert Abs(i.Y) == byt.gamma(YT)
 
 	//@ unfold io.P_Alice(t1, ridT, s1)
 	//@ unfold io.phiR_Alice_1(t1, ridT, s1)
@@ -369,7 +369,7 @@ func (i *Initiator) ProduceHsMsg3() (signedMsg3 []byte, success bool) {
 	}
 
 	//@ requires acc(i, 1/2) && acc(i.l.Mem(), 1/2)
-	//@ requires acc(Mem(signedMsg3), 1/2) && Abs(signedMsg3) == by.signB(ay.tuple5B(ay.integer32B(Msg3Tag), ay.integer32B(i.idA), ay.integer32B(i.idB), by.gamma(i.YT), by.expB(ay.generatorB(), by.gamma(i.xT))), by.gamma(i.skAT))
+	//@ requires acc(Mem(signedMsg3), 1/2) && Abs(signedMsg3) == byt.signB(ay.tuple5B(ay.integer32B(Msg3Tag), ay.integer32B(i.idA), ay.integer32B(i.idB), byt.gamma(i.YT), byt.expB(ay.generatorB(), byt.gamma(i.xT))), byt.gamma(i.skAT))
 	//@ requires pl.token(t0) && io.P_Alice(t0, ridT, s0)
 	//@ requires HasHsMsg3OutFact(ridT, i.idA, i.idB, i.YT, i.xT, i.skAT, s0)
 	//@ requires ProcessedHsMsg2Pred(ridT, i.idA, i.idB, i.skAT, i.skBT, i.xT, i.YT, s0)
@@ -396,16 +396,16 @@ func (i *Initiator) ProduceHsMsg3() (signedMsg3 []byte, success bool) {
 
 	//@ preserves acc(i, 1/2) && acc(i.l.Mem(), 1/2)
 	//@ preserves acc(Mem(i.x), 1/2) && acc(Mem(i.Y), 1/2)
-	//@ preserves Abs(i.x) == by.gamma(i.xT) && Abs(i.Y) == by.gamma(i.YT)
+	//@ preserves Abs(i.x) == byt.gamma(i.xT) && Abs(i.Y) == byt.gamma(i.YT)
 	//@ preserves acc(&i.irKey, 1/2) && acc(&i.riKey, 1/2)
 	//@ ensures   err == nil ==> HandshakeCompletedPred(i.irKey, i.riKey, i.xT, i.YT)
 	//@ outline(
 	var sharedSecret []byte
-	//@ ghost var sharedSecretB by.Bytes
+	//@ ghost var sharedSecretB byt.Bytes
 	sharedSecret, err /*@, sharedSecretB @*/ = i.l.DhSharedSecret(i.x, i.Y)
 	if err == nil {
 		i.irKey, i.riKey = NewBytes(32), NewBytes(32)
-		//@ ghost var t0Abs, t1Abs by.Bytes
+		//@ ghost var t0Abs, t1Abs byt.Bytes
 		err /*@, t0Abs, t1Abs @*/ = KDF2Slice(i.irKey, i.riKey, sharedSecret /*@, sharedSecretB @*/)
 		if err == nil {
 			i.l.PrintKeys(i.irKey, i.riKey)
@@ -434,9 +434,9 @@ func (i *Initiator) ProduceHsMsg3() (signedMsg3 []byte, success bool) {
 // @ requires pl.token(t) && io.e_InFact(t, rid)
 // @ requires Mem(msg)
 // @ ensures  pl.token(old(io.get_e_InFact_placeDst(t, rid)))
-// @ ensures  Mem(msg) && by.gamma(inputDataT) == Abs(msg)
+// @ ensures  Mem(msg) && byt.gamma(inputDataT) == Abs(msg)
 // @ ensures  inputDataT == old(io.get_e_InFact_r1(t, rid))
-func GetInFact(msg []byte /*@, ghost t pl.Place, ghost rid tm.Term @*/) /*@ (inputDataT tm.Term) @*/ {
+func GetInFact(msg []byte /*@, ghost t pl.Place, ghost rid tm.Term @*/) /*@ (ghost inputDataT tm.Term) @*/ {
 	return
 }
 
@@ -487,11 +487,11 @@ func (i *Initiator) ProcessTransportMsg(msgData []byte) (payload []byte, success
 
 	//@ idAT := tm.integer32(i.idA)
 	//@ idBT := tm.integer32(i.idB)
-	//@ payloadT := p.patternRequirementTransMsg(ridT, idAT, idBT, i.skAT, i.skBT, i.xT, i.YT, by.oneTerm(Abs(payload)), msgDataT, t1, s1)
+	//@ payloadT := p.patternRequirementTransMsg(ridT, idAT, idBT, i.skAT, i.skBT, i.xT, i.YT, byt.oneTerm(Abs(payload)), msgDataT, t1, s1)
 	// the following 2 assert stmts are needed for triggering reasons:
-	//@ assert by.ex22B(Abs(msgData)) == Abs(ciphertext)
-	//@ assert by.sdecB(Abs(ciphertext), Abs(i.riKey)) == Abs(payload)
-	//@ assert Abs(payload) == by.gamma(payloadT)
+	//@ assert byt.ex22B(Abs(msgData)) == Abs(ciphertext)
+	//@ assert byt.sdecB(Abs(ciphertext), Abs(i.riKey)) == Abs(payload)
+	//@ assert Abs(payload) == byt.gamma(payloadT)
 	//@ fold HandshakeCompletedPred(i.irKey, i.riKey, i.xT, i.YT)
 
 	//@ unfold io.P_Alice(t1, ridT, s1)
@@ -569,7 +569,7 @@ func (i *Initiator) ProduceTransportMsg(payload []byte) (msgData []byte, success
 		return
 	}
 	//@ msgDataT := tm.tuple2(tm.integer32(TransMsgTag), tm.senc(payloadT, tm.kdf1(tm.exp(i.YT, i.xT))))
-	//@ assert Abs(msgData) == by.gamma(msgDataT)
+	//@ assert Abs(msgData) == byt.gamma(msgDataT)
 
 	//@ idAT := tm.integer32(i.idA)
 	//@ idBT := tm.integer32(i.idB)
